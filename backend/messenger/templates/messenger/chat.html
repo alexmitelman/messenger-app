@@ -212,6 +212,11 @@
 		var chatSocket = new WebSocket(
 			'ws://' + window.location.host +
 			'/ws/chat/' + roomName + '/');
+
+		chatSocket.onopen = function(e) {
+		//   fetchMessages();
+		console.log('Web Socket is open')
+	    }
 	
 		chatSocket.onmessage = function(e) {
 			var data = JSON.parse(e.data);
@@ -244,6 +249,10 @@
 	
 			messageInputDom.value = '';
 		};
+
+		function fetchMessages() {
+	      chatSocket.send(JSON.stringify({'command': 'fetch_messages' }));
+	    }
 
 		function createMessage(data) {
 
