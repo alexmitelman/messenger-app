@@ -215,8 +215,8 @@
 	
 		chatSocket.onmessage = function(e) {
 			var data = JSON.parse(e.data);
-			// document.querySelector('#chat-log').value += (message + '\n');
 			createMessage(data);
+			console.log(data);
 			scrollDown();
 		};
 	
