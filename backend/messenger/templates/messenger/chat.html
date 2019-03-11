@@ -215,8 +215,9 @@
 	
 		chatSocket.onmessage = function(e) {
 			var data = JSON.parse(e.data);
-			var message = data['message'];
-			document.querySelector('#chat-log').value += (message + '\n');
+			// document.querySelector('#chat-log').value += (message + '\n');
+			createMessage(data);
+			scrollDown();
 		};
 	
 		chatSocket.onclose = function(e) {
@@ -239,8 +240,6 @@
 				'sender': username
 			}
 
-			createMessage(message_json);
-			scrollDown();
 			chatSocket.send(JSON.stringify(message_json));
 	
 			messageInputDom.value = '';
