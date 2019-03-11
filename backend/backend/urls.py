@@ -20,7 +20,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('messenger.urls'))
 ]
-
-urlpatterns += [
-    path('', include('django.contrib.auth.urls')),
-]
