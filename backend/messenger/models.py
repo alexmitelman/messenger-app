@@ -18,4 +18,4 @@ class Message(models.Model):
         return f'{self.sender.username}: {self.content}'
 
     def get_history():
-        return Message.objects.order_by('-timestamp').all()
+        return Message.objects.order_by('timestamp').all()

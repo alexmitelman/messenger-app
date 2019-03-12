@@ -17,6 +17,7 @@ class ChatConsumer(WebsocketConsumer):
             self.channel_name,
         )
         self.accept()
+        self.send_history()
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -49,3 +50,20 @@ class ChatConsumer(WebsocketConsumer):
             'message': event['message'],
             'sender': event['sender'],
         }))
+
+    def send_history(self):
+        messages = Message.get_history()
+        for message in messages:
+            message_json = self.message_to_json(message)
+            message_json['type'] = 'chat_message'
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                message_json
+            )
+
+    def message_to_json(self, message):
+        return {
+            'sender': message.sender.username,
+            'message': message.content,
+            'timestamp': str(message.timestamp)
+        }
