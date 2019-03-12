@@ -30,7 +30,6 @@
 								</div>
 								<div class="user_info">
 									<span>Chat with Maryam Naz</span>
-									<p>1767 Messages</p>
 								</div>
 							</div>
 							<div class="action_menu">
@@ -70,14 +69,12 @@
 			'/ws/chat/' + roomName + '/');
 
 		chatSocket.onopen = function(e) {
-		//   fetchMessages();
-		console.log('Web Socket is open')
+			console.log('Web Socket is open')
 	    }
 	
 		chatSocket.onmessage = function(e) {
 			var data = JSON.parse(e.data);
 			createMessage(data);
-			console.log(data);
 			scrollDown();
 		};
 	
@@ -106,13 +103,9 @@
 			messageInputDom.value = '';
 		};
 
-		function fetchMessages() {
-	      chatSocket.send(JSON.stringify({'command': 'fetch_messages' }));
-	    }
-
 		function createMessage(data) {
 
-			var author = data['sender'];
+			author = data['sender'];
 			imageDiv = document.createElement('div');
 			imageDiv.classList.add('img_cont_msg');
 			image = document.createElement('img');
@@ -120,7 +113,10 @@
 			messageText.textContent = data['message'];
 			messageTime = document.createElement('span');
 			messageTime.classList.add('msg_time');
+			// ts = new Date(data['timestamp']);
+			// messageTime.textContent = ts.toLocaleTimeString();
 			entireMessage = document.createElement('div');
+			console.log(data)
 
 			if (author === username) {
 				image.src = 'https://img.icons8.com/dusk/128/000000/anonymous-mask.png';

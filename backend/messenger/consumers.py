@@ -42,6 +42,7 @@ class ChatConsumer(WebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'sender': sender,
+                'timestamp': timestamp
             }
         )
 
@@ -49,6 +50,7 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': event['message'],
             'sender': event['sender'],
+            'timestamp': event['timestamp']
         }))
 
     def send_history(self):
