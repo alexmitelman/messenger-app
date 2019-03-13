@@ -12,7 +12,7 @@ class Chat(models.Model):
         result = []
         for cur_user in self.user.all():
             result.append(cur_user.username)
-        return ' + '.join(result)
+        return '.-'.join(result)
 
     def new(user1, user2):
         chat = Chat()
@@ -23,8 +23,8 @@ class Chat(models.Model):
     def get(username1, username2):
         user1 = User.objects.get(username=username1)
         user2 = User.objects.get(username=username2)
-        chat = Chat.objects.filter(user=user1).filter(user=user2)
-        if len(chat) == 0:
+        chat = Chat.objects.filter(user=user1).filter(user=user2)[0]
+        if not chat:
             chat = Chat.new(user1, user2)
         return chat
 
@@ -42,5 +42,5 @@ class Message(models.Model):
     def __str__(self):
         return f'{self.sender.username}: {self.content}'
 
-    def get_history():
-        return Message.objects.order_by('timestamp').all()
+    def get_history(chat_id):
+        return Message.objects.filter(chat=chat_id).order_by('timestamp')
