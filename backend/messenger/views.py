@@ -12,6 +12,7 @@ def index(request):
 @staff_member_required
 def chat(request, contact_name):
     return render(request, 'messenger/chat.html', {
-        'contact_name_json': mark_safe(json.dumps(contact_name)),
+        'contact_name': contact_name,
+        'room_name_json': mark_safe(json.dumps(contact_name)),
         'username_json': mark_safe(json.dumps(request.user.username))
     })

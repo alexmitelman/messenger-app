@@ -1,7 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth import get_user_model
-from .models import Message
+from .models import Message, Chat
 import json
 
 
@@ -10,8 +10,10 @@ User = get_user_model()
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
-        self.contact_name = self.scope['url_route']['kwargs']['contact_name']
-        self.room_group_name = 'chat_%s' % self.contact_name
+        contact_name = self.scope['url_route']['kwargs']['contact_name']
+        current_username = self.scope['user'].username
+        self.chat = Chat.get(current_username, contact_name)
+        self.room_group_name = str(self.chat)
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name,
@@ -34,6 +36,7 @@ class ChatConsumer(WebsocketConsumer):
         message_obj = Message.objects.create(
             sender=sender_user,
             content=message,
+            chat=self.chat
         )
 
         async_to_sync(self.channel_layer.group_send)(
@@ -42,7 +45,6 @@ class ChatConsumer(WebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'sender': sender,
-                'timestamp': timestamp
             }
         )
 
@@ -50,11 +52,10 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': event['message'],
             'sender': event['sender'],
-            'timestamp': event['timestamp']
         }))
 
     def send_history(self):
-        messages = Message.get_history()
+        messages = Message.get_history(self.chat)
         for message in messages:
             message_json = self.message_to_json(message)
             message_json['type'] = 'chat_message'
